@@ -148,7 +148,7 @@ def _search_measurement_status(value: int) -> t.Optional[MeasurementStatus]:
 
 
 
-class GaugeID(int, enum.Enum):
+class GaugeID(bytes, enum.Enum):
 
     TPR = b"TPR"
     """Pirani Gauge or Pirani Capacitive gauge"""
