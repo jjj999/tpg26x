@@ -6,7 +6,7 @@ authors = ["jjj999 <jjj999to@gmail.com>"]
 license = "MIT"
 
 [tool.poetry.dependencies]
-python = "^3.5"
+python = ">=3.5"
 pyserial = "^3.5"
 
 [tool.poetry.dev-dependencies]

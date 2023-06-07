@@ -11,8 +11,8 @@ cp2110 = ["hidapi"]
 
 [metadata]
 lock-version = "1.1"
-python-versions = "^3.5"
-content-hash = "f9b7b022cff1e60bee3ebf2736f1f390aa1526320001cc09bf361a475c82ad96"
+python-versions = ">=3.5"
+content-hash = "6804d4ecc172b3b53f2c263fc7f39733bdc1489ee59b1da88a3579346bb71f3d"
 
 [metadata.files]
 pyserial = [
