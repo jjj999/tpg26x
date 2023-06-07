@@ -1,6 +1,5 @@
 import enum
 from functools import cached_property
-import io
 import typing as t
 
 from serial import Serial
@@ -244,7 +243,7 @@ class Tpg26x:
     def __init__(self, port: str, baudrate: int = 9600) -> None:
         self._serial = Serial(port=port, baudrate=baudrate)
 
-        self._log_to: t.List[io.TextIOWrapper] = []
+        self._log_to = []
 
     def _close(self) -> None:
         self._serial.close()
@@ -264,7 +263,7 @@ class Tpg26x:
         data = self._serial.readline()
         if data[-2:] == self.NEWLINE:
             return data[:-2]
-        raise IOError(f"Unrecognizable data was received: {data}")
+        raise IOError("Unrecognizable data was received: {}".format(data))
 
     @classmethod
     def _handle_ack(cls, data: bytes, mnemonic: Mnemonics) -> None:
@@ -272,9 +271,11 @@ class Tpg26x:
             return
         elif data == cls.NACK:
             mnemonic = mnemonic.decode()
-            raise IOError(f"Mnemonic {mnemonic} was forbiddened by the TPG26x.")
+            raise IOError(
+                "Mnemonic {} was forbiddened by the TPG26x.".format(mnemonic),
+            )
         else:
-            raise IOError(f"Unexpected data was received: {data}")
+            raise IOError("Unexpected data was received: {}".format(data))
 
     def send_command(self, mnemonic: Mnemonics, *args: bytes) -> None:
         self._write(mnemonic.value, *args)
@@ -349,7 +350,7 @@ class Tpg26x:
         if (status1 != signal1) or (status2 != signal2):
             raise IOError(
                 "Gauges cannot be turned on or off.\n"
-                f"Status: gauge 1 -> {status1}, gauge2 -> {status2}"
+                "Status: gauge 1 -> {}, gauge2 -> {}".format(status1, status2)
             )
 
     def turn_on_gauge1(self) -> None:
@@ -382,17 +383,17 @@ class Tpg26x:
 
         return (id_gauge1, id_gauge2)
 
-    @cached_property
-    def id_gauge1(self) -> None:
+    @property
+    def id_gauge1(self) -> GaugeID:
         return self._get_gauge_ids()[0]
 
-    @cached_property
-    def id_gauge2(self) -> None:
+    @property
+    def id_gauge2(self) -> GaugeID:
         return self._get_gauge_ids()[1]
 
     def _change_channel(self, channel: GaugeType) -> GaugeType:
         if channel not in {b"0", b"1"}:
-            raise ValueError(f"'channel' must be 0 or 1 as bytes.")
+            raise ValueError("'channel' must be 0 or 1 as bytes.")
 
         self.send_command(Mnemonics.SCT, channel)
         self.enquiry()
@@ -416,7 +417,7 @@ class Tpg26x:
         status = _search_error_status(data)
         if status is not None:
             return status
-        raise IOError(f"Unexpected binary was received: {data}")
+        raise IOError("Unexpected binary was received: {}".format(data))
 
     def reset(self) -> t.List[ResetErrorStatus]:
         self.send_command(Mnemonics.RES, b"1")
